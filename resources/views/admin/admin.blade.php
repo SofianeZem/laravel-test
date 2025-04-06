@@ -19,7 +19,7 @@
 
         <!-- Liens + Logout -->
         <div class="flex items-center space-x-6">
-            <a href="{{ route('admin.property.index') }}"
+            <a href="/"
                class="{{ request()->routeIs('admin.property.*') ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-gray-800 transition' }}">
                 Gérer les biens
             </a>
@@ -27,25 +27,24 @@
                class="{{ request()->routeIs('admin.option.*') ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-gray-800 transition' }}">
                 Gérer les options
             </a>
+                            @auth
+                                <form action="{{ route('logout') }}" method="POST" class="ml-4">
+                                    @csrf
+                                    <button class="text-red-500 hover:underline hover:text-red-700 transition">
+                                        Se déconnecter
+                                    </button>
+                                </form>
+                            @endauth
+                        </div>
+                    </div>
+                </nav>
 
-            @auth
-                <form action="{{ route('logout') }}" method="post" class="ml-4">
-                    @csrf
-                    @method('delete')
-                    <button class="text-red-500 hover:underline hover:text-red-700 transition">
-                        Se déconnecter
-                    </button>
-                </form>
-            @endauth
-        </div>
-    </div>
-</nav>
+                <div class="max-w-6xl mx-auto px-6 py-10 space-y-6">
+                    @include('shared.flash')
 
-<div class="max-w-6xl mx-auto px-6 py-10 space-y-6">
-    @include('shared.flash')
+                    @yield('content')
+                </div>
 
-    @yield('content')
-</div>
 
 </body>
 </html>

@@ -29,9 +29,9 @@ class AuthController extends Controller
             'email' => 'Identifiants incorrects.',])->onlyInput('email');
     }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        return to_route('login')->with('success', 'Vous êtes déconnecté ');
-    }
+//    public function logout(Request $request)
+//    {
+//        Auth::logout();
+//        return to_route('login')->with('success', 'Vous êtes déconnecté ');
+//    }
 }

@@ -1,36 +1,45 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    HomeController,
+    ProfileController,
+    PropertyController,
+    Admin\OptionController
+};
 
 $idRegex = '[0-9]+';
 $slugRegex = '[a-z0-9\-]+';
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
-Route::get('/biens', [\App\Http\Controllers\PropertyController::class, 'index'])->name('property.index');
-Route::get('/biens/{slug}-{property}', [\App\Http\Controllers\PropertyController::class, 'show'])->name('property.show')
-    ->where(['property' => $idRegex,
-        'slug' => $slugRegex]);
+Route::get('/', function () {
+    $properties = \App\Models\Property::latest()->paginate(16);
+    return view('admin.properties.index', compact('properties'));
+})->middleware(['auth', 'verified'])->name('home');
 
-Route::post('/biens/{property}/contact', [\App\Http\Controllers\PropertyController::class, 'contact'])->name('property.contact')
-    ->where(['property' => $idRegex]);
+Route::get('/biens', [PropertyController::class, 'index'])->name('property.index');
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(callback: function () {
-    Route::resource('property', \App\Http\Controllers\PropertyController::class)->except('show');
-    Route::resource('option', \App\Http\Controllers\Admin\OptionController::class)->except('show');
-});
+Route::get('/biens/{slug}-{property}', [PropertyController::class, 'show'])
+    ->name('property.show')
+    ->where(['slug' => $slugRegex, 'property' => $idRegex]);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/biens/{property}/contact', [PropertyController::class, 'contact'])
+    ->name('property.contact')
+    ->where('property', $idRegex);
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+    Route::resource('property', \App\Http\Controllers\Admin\PropertyController::class)->except('show');
+    Route::resource('option', OptionController::class)->except('show');
+
+    Route::get('admin', [PropertyController::class, 'index'])->name('admin');
+});
+
+
 require __DIR__.'/auth.php';
-
-
