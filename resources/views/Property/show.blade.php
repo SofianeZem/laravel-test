@@ -37,9 +37,10 @@
                 @include('shared.input', ['type' => 'textarea', 'class' => 'w-full', 'name' => 'message', 'label' => 'Votre message'])
 
                 <div class="text-center">
-                    <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition mb-2">
                         Nous contacter
                     </button>
+                    <livewire:booking-manager :propertyId="$property->id" />
                 </div>
             </form>
         </div>

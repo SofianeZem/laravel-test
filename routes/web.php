@@ -16,8 +16,8 @@ Route::get('/biens/{slug}-{property}', [\App\Http\Controllers\PropertyController
 Route::post('/biens/{property}/contact', [\App\Http\Controllers\PropertyController::class, 'contact'])->name('property.contact')
     ->where(['property' => $idRegex]);
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
-    Route::resource('property', PropertyController::class)->except('show');
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(callback: function () {
+    Route::resource('property', \App\Http\Controllers\PropertyController::class)->except('show');
     Route::resource('option', \App\Http\Controllers\Admin\OptionController::class)->except('show');
 });
 
